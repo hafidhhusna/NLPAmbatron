@@ -11,26 +11,6 @@ load_dotenv()
 youtube_api_key = os.getenv('youtube_api')
 youtube = build('youtube', 'v3', developerKey=youtube_api_key)
 
-# Define patterns and responses
-patterns_responses = {
-    r'hi|hello|hey': 'Hello! How can I assist you today?',
-    r'how are you': 'I am just a bot, but I am doing great! How about you?',
-    r'what is your name': 'I am a chatbot created to assist you with your questions.',
-    r'(.*) your (favorite|favourite) (.*)': 'I do not have preferences, but I enjoy helping you!',
-    r'thank you|thanks': 'You are welcome! If you have more questions, feel free to ask.',
-    r'bye|goodbye': 'Goodbye! Have a great day!'
-}
-
-# Default response for unmatched patterns
-default_response = "I'm sorry, I don't understand that. Can you please rephrase?"
-
-# Function to match user input to a pattern and return the corresponding response
-def get_response(user_input):
-    for pattern, response in patterns_responses.items():
-        if re.search(pattern, user_input, re.IGNORECASE):
-            return response
-    return default_response
-
 # Function to search YouTube and return the first video link
 def search_youtube(keyword):
     request = youtube.search().list(
@@ -47,6 +27,29 @@ def search_youtube(keyword):
         return f"https://www.youtube.com/watch?v={video_id}"
     else:
         return "Sorry, I couldn't find a video for that."
+
+# Define patterns and responses with support for callable functions
+patterns_responses = {
+    r'\$search youtube for (.+)': lambda keyword: f"Searching for '{keyword}' YouTube video...\n{search_youtube(keyword)}",
+    r'hi|hello|hey|halo|hai': lambda _: 'Hello! How can I assist you today?',
+    r'how are you': lambda _: 'I am just a bot, but I am doing great! How about you?',
+    r'what is your name': lambda _: 'I am a chatbot created to assist you with your questions.',
+    r'(.*) your (favorite|favourite) (.*)': lambda _: 'I do not have preferences, but I enjoy helping you!',
+    r'thank you|thanks': lambda _: 'You are welcome! If you have more questions, feel free to ask.',
+    r'bye|goodbye': lambda _: 'Goodbye! Have a great day!'
+}
+
+# Default response for unmatched patterns
+default_response = "I'm sorry, I don't understand that. Can you please rephrase?"
+
+# Function to match user input to a pattern and return the corresponding response
+def get_response(user_input):
+    for pattern, func in patterns_responses.items():
+        match = re.search(pattern, user_input, re.IGNORECASE)
+        if match:
+            # Call the function associated with the matched pattern
+            return func(match.group(1) if match.groups() else None)
+    return default_response
 
 # Initialize the bot with intents
 intents = discord.Intents.default()
@@ -66,13 +69,8 @@ async def on_message(message):
 
     user_input = message.content
 
-    # If the user input is a standard query, get the chatbot response
+    # Get the response based on user input
     response = get_response(user_input)
-
-    # Check if the user is asking for a YouTube search
-    if user_input.lower().startswith("$search youtube for "):
-        keyword = user_input[len("search youtube for "):].strip()
-        response = search_youtube(keyword)
 
     # Send the response back to the Discord channel
     await message.channel.send(response)
