@@ -1,10 +1,8 @@
 import discord
 import os
 import re
-from dotenv import load_dotenv
 
 # Load environment variables from .env file
-load_dotenv()
 
 # Define patterns and responses
 patterns_responses = {
@@ -49,6 +47,4 @@ async def on_message(message):
     # Send the response back to the Discord channel
     await message.channel.send(response)
 
-# Run the bot with the token from the .env file
-token = os.getenv()
 client.run()
