@@ -50,5 +50,5 @@ async def on_message(message):
     await message.channel.send(response)
 
 # Run the bot with the token from the .env file
-token = os.getenv('DISCORD_TOKEN')
-client.run(token)
+token = os.getenv()
+client.run()
