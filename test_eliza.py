@@ -1,6 +1,7 @@
 import discord
 import os
 import re
+from dotenv import load_dotenv
 
 # Load environment variables from .env file
 
@@ -47,4 +48,5 @@ async def on_message(message):
     # Send the response back to the Discord channel
     await message.channel.send(response)
 
-client.run()
+token = load_dotenv('token')
+client.run(token)
