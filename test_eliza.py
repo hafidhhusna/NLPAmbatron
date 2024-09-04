@@ -2,8 +2,14 @@ import discord
 import os
 import re
 from dotenv import load_dotenv
+from googleapiclient.discovery import build
 
 # Load environment variables from .env file
+load_dotenv()
+
+# YouTube Data API setup
+youtube_api_key = os.getenv('youtube_api')
+youtube = build('youtube', 'v3', developerKey=youtube_api_key)
 
 # Define patterns and responses
 patterns_responses = {
@@ -25,6 +31,23 @@ def get_response(user_input):
             return response
     return default_response
 
+# Function to search YouTube and return the first video link
+def search_youtube(keyword):
+    request = youtube.search().list(
+        part="snippet",
+        q=keyword,
+        type="video",
+        maxResults=1
+    )
+    response = request.execute()
+
+    # If a video is found, return its link
+    if response['items']:
+        video_id = response['items'][0]['id']['videoId']
+        return f"https://www.youtube.com/watch?v={video_id}"
+    else:
+        return "Sorry, I couldn't find a video for that."
+
 # Initialize the bot with intents
 intents = discord.Intents.default()
 intents.message_content = True
@@ -41,12 +64,19 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    # Get the chatbot response
     user_input = message.content
+
+    # If the user input is a standard query, get the chatbot response
     response = get_response(user_input)
+
+    # Check if the user is asking for a YouTube search
+    if user_input.lower().startswith("$search youtube for "):
+        keyword = user_input[len("search youtube for "):].strip()
+        response = search_youtube(keyword)
 
     # Send the response back to the Discord channel
     await message.channel.send(response)
 
-token = load_dotenv('token')
+# Run the bot with the token from the .env file
+token = os.getenv('token')
 client.run(token)
