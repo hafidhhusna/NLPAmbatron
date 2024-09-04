@@ -30,13 +30,13 @@ def search_youtube(keyword):
 
 # Define patterns and responses with support for callable functions
 patterns_responses = {
-    r'\$search youtube for (.+)': lambda keyword: f"Searching for '{keyword}' YouTube video...\n{search_youtube(keyword)}",
+    r'\$i want to learn (.+)': lambda keyword: f"Searching for '{keyword}' YouTube video...\n{search_youtube(keyword)}",
     r'hi|hello|hey|halo|hai': lambda _: 'Hello! How can I assist you today?',
-    r'how are you': lambda _: 'I am just a bot, but I am doing great! How about you?',
-    r'what is your name': lambda _: 'I am a chatbot created to assist you with your questions.',
-    r'(.*) your (favorite|favourite) (.*)': lambda _: 'I do not have preferences, but I enjoy helping you!',
+    r'how are you|how you feeling': lambda _: 'I am doing great! How about you?',
+    r'what is your name|who are you': lambda _: 'I am a chatbot created to assist you with your questions.',
+    r'what can you do|help': lambda _: 'I can help you provide YouTube Video. Just type "$i want to learn <keyword>" to get started!',
     r'thank you|thanks': lambda _: 'You are welcome! If you have more questions, feel free to ask.',
-    r'bye|goodbye': lambda _: 'Goodbye! Have a great day!'
+    r'bye|goodbye': lambda _: 'Goodbye! Have a great day!',
 }
 
 # Default response for unmatched patterns
