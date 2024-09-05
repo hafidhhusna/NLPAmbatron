@@ -30,12 +30,19 @@ def search_youtube(keyword):
 
 # Define patterns and responses with support for callable functions
 patterns_responses = {
+    r'hi|hello|hey|halo|hai': lambda _: 'Hello, how can I assist you with learning programming today?',
+    r'(.*)?(feeling|kabar)': lambda _: 'I am doing great! How about you?',
+    r'(.*)?(name|nama)': lambda _: 'I am a rule-based chatbot created to help you learn programming, from basic concepts to advanced topics.',
+    r'(.*)?(do|help|lakukan)': lambda _: 'I can help you provide YouTube Video. Just type "$i want to learn <keyword>" to get started!',
+    r'(.*)?(pertanyaan|question)': lambda _: 'Sure, feel free to ask your programming-related question!',
+    r'(.*)?(about|tentang)(.*)': lambda keyword: f"Do you find {keyword} interesting?",
+    r'(.*)?(terjebak|stuck)(.*)': lambda _: 'Feeling stuck is normal in programming. Take a deep breath and let me help you figure it out!',
+    r'(.*)?(menyenangkan|fun)(.*)': lambda _: 'Programming can be very rewarding! What aspect of it are you enjoying the most?',
+    r'(.*)?error(.*)': lambda _: 'Encountering an error is part of the learning process',
+    r'(.*)?(sulit|susah|hard|difficult)(.*)': lambda _: 'Programming can be challenging at times',
+    r'(.*)?menurut (saya|aku),(.*)': lambda _: 'Would you like to explore this topic further?',
     r'\$i want to learn (.+)': lambda keyword: f"Searching for '{keyword}' YouTube video...\n{search_youtube(keyword)}",
-    r'hi|hello|hey|halo|hai': lambda _: 'Hello! How can I assist you today?',
-    r'how are you|how you feeling': lambda _: 'I am doing great! How about you?',
-    r'what is your name|who are you': lambda _: 'I am a chatbot created to assist you with your questions.',
-    r'what can you do|help': lambda _: 'I can help you provide YouTube Video. Just type "$i want to learn <keyword>" to get started!',
-    r'thank you|thanks': lambda _: 'You are welcome! If you have more questions, feel free to ask.',
+    r'thank you|thanks|terimakasih|makasih': lambda _: 'You are welcome! If you have more questions, feel free to ask.',
     r'bye|goodbye': lambda _: 'Goodbye! Have a great day!',
 }
 
